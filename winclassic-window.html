@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Windows Classic Window Generator</title>
+    <script src="./winclassic-window.js"></script>
+    <script src="./download.js"></script>
+    <style>
+      #preview {
+        display: inline-block;
+        overflow: hidden;
+        padding: 1ex;
+        resize: both;
+        border: 2px inset black;
+        background-color: #808080;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Windows Classic Window Generator</h1>
+    <form id="inputs">
+      <fieldset>
+        <label>Width <input id="width" type="number" value="532" min="0" /></label>
+        <label>Height <input id="height" type="number" value="972" min="0" /></label>
+        <label>Scale <input id="scale" type="number" value="2" min="0" step="any" /></label>
+        <label><input id="show-scrollbar" type="checkbox" checked="checked" /> Scrollbar</label>
+        <label><input id="show-status" type="checkbox" checked="checked" /> Status bar</label>
+        <label><input id="show-resize" type="checkbox" checked="checked" /> Resize grip</label>
+        <label><input id="maximized" type="checkbox" /> Maximized</label>
+        <input id="reset" type="reset" />
+      </fieldset>
+    </form>
+    <div>
+      <button id="download-svg">Download SVG</button>
+      <button id="download-png">Download PNG</button>
+      <label>Content size: <output id="content-size"></output></label>
+    </div>
+    <div id="preview"></div>
+    <output for="width height"><textarea id="output" readonly="readonly" rows="24" cols="80" style="width: 100%"></textarea></output>
+
+    <script>
+      const widthInput = document.getElementById("width");
+      const heightInput = document.getElementById("height");
+      const scaleInput = document.getElementById("scale");
+      const scrollbarInput = document.getElementById("show-scrollbar");
+      const resizeInput = document.getElementById("show-resize");
+      const statusInput = document.getElementById("show-status");
+      const maximizedInput = document.getElementById("maximized");
+      const previewOutput = document.getElementById("preview");
+      const codeOutput = document.getElementById("output");
+      const contentSizeOutput = document.getElementById("content-size");
+      const resetButton = document.getElementById("reset");
+      const downloadSVGButton = document.getElementById("download-svg");
+      const downloadPNGButton = document.getElementById("download-png");
+      let svg;
+
+      function addXMLDeclaration(code) {
+        return '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n' + code;
+      }
+
+      function update({
+        width = widthInput.value,
+        height = heightInput.value,
+        scale = scaleInput.value,
+        showScrollbar = scrollbarInput.checked,
+        showResize = resizeInput.checked,
+        showStatus = statusInput.checked,
+        maximized = maximizedInput.checked,
+      } = {}) {
+        ({
+          svg,
+          dimensions: { windowTextArea: { width: contentWidth, height: contentHeight } },
+        } = createWindowSVG({
+          width,
+          height,
+          scale,
+          showScrollbar,
+          showResize,
+          showStatus,
+          maximized,
+        }));
+
+        widthInput.value = width;
+        heightInput.value = height;
+        previewOutput.innerHTML = svg;
+        previewOutput.style.width = width + "px";
+        previewOutput.style.height = height + "px";
+        codeOutput.value = addXMLDeclaration(svg);
+        contentSizeOutput.value = `${contentWidth}×${contentHeight}`;
+      }
+
+      document.forms.inputs.addEventListener("input", () => update());
+      document.forms.inputs.addEventListener("change", () => update());
+      document.forms.inputs.addEventListener("reset", () => setTimeout(update, 0));
+      downloadSVGButton.addEventListener("click", () => downloadSVG(addXMLDeclaration(svg), `window-${widthInput.value}x${heightInput.value}s${scaleInput.value}.svg`));
+      downloadPNGButton.addEventListener("click", () => downloadPNG(addXMLDeclaration(svg), `window-${widthInput.value}x${heightInput.value}s${scaleInput.value}.png`, widthInput.value, heightInput.value));
+      (new ResizeObserver(([{ contentBoxSize: { inlineSize: width, blockSize: height } }]) => {
+        update({ width, height });
+      })).observe(previewOutput);
+
+      update();
+    </script>
+  </body>
+</html>
