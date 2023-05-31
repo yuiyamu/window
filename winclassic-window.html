@@ -14,6 +14,15 @@
         border: 2px inset black;
         background-color: #808080;
       }
+
+      .colors {
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      .colors label {
+        display: block;
+      }
     </style>
   </head>
   <body>
@@ -28,6 +37,36 @@
         <label><input id="show-resize" type="checkbox" checked="checked" /> Resize grip</label>
         <label><input id="maximized" type="checkbox" /> Maximized</label>
         <input id="reset" type="reset" />
+
+        <details>
+          <summary>Colors</summary>
+          <div class="colors">
+            <fieldset>
+              <legend>Button</legend>
+              <label><input type="color" name="ButtonDkShadow" id="ButtonDkShadow" class="color-item" data-item="ButtonDkShadow"/> ButtonDkShadow</label>
+              <label><input type="color" name="ButtonFace" id="ButtonFace" class="color-item" data-item="ButtonFace"/> ButtonFace</label>
+              <label><input type="color" name="ButtonHilight" id="ButtonHilight" class="color-item" data-item="ButtonHilight"/> ButtonHilight</label>
+              <label><input type="color" name="ButtonLight" id="ButtonLight" class="color-item" data-item="ButtonLight"/> ButtonLight</label>
+              <label><input type="color" name="ButtonShadow" id="ButtonShadow" class="color-item" data-item="ButtonShadow"/> ButtonShadow</label>
+              <label><input type="color" name="ButtonText" id="ButtonText" class="color-item" data-item="ButtonText"/> ButtonText</label>
+            </fieldset>
+
+            <fieldset>
+              <legend>Window</legend>
+              <label><input type="color" name="AppWorkspace" id="AppWorkspace" class="color-item" data-item="AppWorkspace"/> AppWorkspace</label>
+              <label><input type="color" name="Window" id="Window" class="color-item" data-item="Window"/> Window</label>
+            </fieldset>
+
+            <fieldset>
+              <legend>Title Bar</legend>
+              <label><input type="color" name="ActiveTitle" id="ActiveTitle" class="color-item" data-item="ActiveTitle"/> ActiveTitle</label>
+              <label><input type="color" name="GradientActiveTitle" id="GradientActiveTitle" class="color-item" data-item="GradientActiveTitle"/> GradientActiveTitle</label>
+              <label><input type="color" name="GradientInactiveTitle" id="GradientInactiveTitle" class="color-item" data-item="GradientInactiveTitle"/> GradientInactiveTitle</label>
+              <label><input type="color" name="InactiveTitle" id="InactiveTitle" class="color-item" data-item="InactiveTitle"/> InactiveTitle</label>
+            </fieldset>
+          </div>
+        </details>
+
       </fieldset>
     </form>
     <div>
@@ -52,11 +91,20 @@
       const resetButton = document.getElementById("reset");
       const downloadSVGButton = document.getElementById("download-svg");
       const downloadPNGButton = document.getElementById("download-png");
+      const colorPickers = Array.from(document.getElementsByClassName("color-item"));
       let svg;
 
       function addXMLDeclaration(code) {
         return '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n' + code;
       }
+
+      function createColorsObject(colorPickers) {
+        return colorPickers.reduce((pickers, picker) => Object.assign(pickers, { [picker.dataset.item]: picker.value }), {});
+      }
+
+     function setDefaultColors() {
+       colorPickers.forEach((picker) => picker.defaultValue = DEFAULT_COLORS[picker.dataset.item]);
+     }
 
       function update({
         width = widthInput.value,
@@ -66,6 +114,7 @@
         showResize = resizeInput.checked,
         showStatus = statusInput.checked,
         maximized = maximizedInput.checked,
+        colors = createColorsObject(colorPickers),
       } = {}) {
         ({
           svg,
@@ -78,6 +127,7 @@
           showResize,
           showStatus,
           maximized,
+          colors,
         }));
 
         widthInput.value = width;
@@ -98,6 +148,7 @@
         update({ width, height });
       })).observe(previewOutput);
 
+      setDefaultColors();
       update();
     </script>
   </body>
