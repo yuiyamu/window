@@ -40,6 +40,7 @@ function createWindowSVG({
   showResize = true,
   showStatus = true,
   maximized = false,
+  palette = 'active',
   colors: {
     ButtonDkShadow = DEFAULT_COLORS.ButtonDkShadow,
     ButtonShadow = DEFAULT_COLORS.ButtonShadow,
@@ -49,6 +50,8 @@ function createWindowSVG({
     ButtonText = DEFAULT_COLORS.ButtonText,
     ActiveTitle = DEFAULT_COLORS.ActiveTitle,
     GradientActiveTitle = DEFAULT_COLORS.GradientActiveTitle,
+    InactiveTitle = DEFAULT_COLORS.InactiveTitle,
+    GradientInactiveTitle = DEFAULT_COLORS.GradientInactiveTitle,
     Window = DEFAULT_COLORS.Window,
   } = {},
 }) {
@@ -105,6 +108,15 @@ function createWindowSVG({
   resizeGrip.x = windowContents.width - resizeGrip.width;
   resizeGrip.y = windowContents.height - resizeGrip.height;
 
+  const titleColor = {
+    active: 'ActiveTitle',
+    inactive: 'InactiveTitle',
+  }[palette] ?? 'ActiveTitle';
+  const titleGradientColor = {
+    active: 'GradientActiveTitle',
+    inactive: 'GradientInactiveTitle',
+  }[palette] ?? 'GradientActiveTitle';
+
   const svg= `<svg
    width="${targetWidth}"
    height="${targetHeight}"
@@ -121,6 +133,8 @@ function createWindowSVG({
      .ButtonText     { fill: ${ButtonText}; }
      .ActiveTitle    { fill: ${ActiveTitle}; stop-color: ${ActiveTitle}; }
      .GradientActiveTitle { fill: ${GradientActiveTitle}; stop-color: ${GradientActiveTitle}; }
+     .InactiveTitle    { fill: ${InactiveTitle}; stop-color: ${InactiveTitle}; }
+     .GradientInactiveTitle { fill: ${GradientInactiveTitle}; stop-color: ${GradientInactiveTitle}; }
      .Window { fill: ${Window}; }
    ]]></style>
    <defs>
@@ -131,8 +145,8 @@ function createWindowSVG({
      <path id="scroll-up-symbol" d="m 0,4 v -1 h 1 v -1 h 1 v -1 h 1 v -1 h 1 v 1 h 1 v 1 h 1 v 1 h 1 v 1 h -7" class="ButtonText"/>
      <path id="scroll-down-symbol" d="m 0,0 h 7 v 1 h -1 v 1 h -1 v 1 h -1 v 1 h -1 v -1 h -1 v -1 h -1 v -1 h -1 v -1" class="ButtonText"/>
      <linearGradient id="titlebar-gradient">
-       <stop offset="0" class="ActiveTitle"/>
-       <stop offset="1" class="GradientActiveTitle"/>
+       <stop offset="0" class="${titleColor}"/>
+       <stop offset="1" class="${titleGradientColor}"/>
      </linearGradient>
      <pattern id="scrollbar-pattern" width="2" height="2" patternUnits="userSpaceOnUse">
        <rect x="0" y="0" width="2" height="2" class="ButtonFace"/>
@@ -191,7 +205,7 @@ function createWindowSVG({
      </g>
 
      <g id="titlebar-buttons">
-       <rect class="GradientActiveTitle" width="54" height="18"/>
+       <rect class="${titleGradientColor}" width="54" height="18"/>
        <use href="#minimize-button" xlink:href="#minimize-button" x="2" y="2"/>
 ${maximized ? '       <use href="#restore-button" xlink:href="#restore-button" x="18" y="2"/>\n'
             : '       <use href="#maximize-button" xlink:href="#maximize-button" x="18" y="2"/>\n'

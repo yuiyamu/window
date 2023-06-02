@@ -40,6 +40,11 @@
 
         <details>
           <summary>Colors</summary>
+          <div class="palette">
+            Palette:
+            <label><input id="palette-active" type="radio" name="palette" value="active" /> Active</label>
+            <label><input id="palette-inactive" type="radio" name="palette" value="inactive" /> Inactive</label>
+          </div>
           <div class="colors">
             <fieldset>
               <legend>Button</legend>
@@ -85,6 +90,7 @@
       const resizeInput = document.getElementById("show-resize");
       const statusInput = document.getElementById("show-status");
       const maximizedInput = document.getElementById("maximized");
+      const paletteInputGroup = document.forms.inputs.elements.palette;
       const previewOutput = document.getElementById("preview");
       const codeOutput = document.getElementById("output");
       const contentSizeOutput = document.getElementById("content-size");
@@ -114,6 +120,7 @@
         showResize = resizeInput.checked,
         showStatus = statusInput.checked,
         maximized = maximizedInput.checked,
+        palette = paletteInputGroup.value,
         colors = createColorsObject(colorPickers),
       } = {}) {
         ({
@@ -127,6 +134,7 @@
           showResize,
           showStatus,
           maximized,
+          palette,
           colors,
         }));
 
