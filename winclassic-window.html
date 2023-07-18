@@ -23,12 +23,22 @@
       .colors label {
         display: block;
       }
+
+      .reset-button {
+        float: right;
+      }
+
+      label {
+        white-space: nowrap;
+      }
     </style>
   </head>
   <body>
     <h1>Windows Classic Window Generator</h1>
     <form id="inputs">
       <fieldset>
+        <input id="reset" type="reset" class="reset-button" />
+
         <label>Width <input id="width" type="number" value="532" min="0" /></label>
         <label>Height <input id="height" type="number" value="972" min="0" /></label>
         <label>Scale <input id="scale" type="number" value="2" min="0" step="any" /></label>
@@ -36,7 +46,6 @@
         <label><input id="show-status" type="checkbox" checked="checked" /> Status bar</label>
         <label><input id="show-resize" type="checkbox" checked="checked" /> Resize grip</label>
         <label><input id="maximized" type="checkbox" /> Maximized</label>
-        <input id="reset" type="reset" />
 
         <details>
           <summary>Colors</summary>
