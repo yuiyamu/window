@@ -152,7 +152,9 @@
       document.forms.inputs.addEventListener("reset", () => setTimeout(update, 0));
       downloadSVGButton.addEventListener("click", () => downloadSVG(addXMLDeclaration(svg), `window-${widthInput.value}x${heightInput.value}s${scaleInput.value}.svg`));
       downloadPNGButton.addEventListener("click", () => downloadPNG(addXMLDeclaration(svg), `window-${widthInput.value}x${heightInput.value}s${scaleInput.value}.png`, widthInput.value, heightInput.value));
-      (new ResizeObserver(([{ contentBoxSize: { inlineSize: width, blockSize: height } }]) => {
+      (new ResizeObserver(([{ contentBoxSize }]) => {
+        // contentBoxSize was originally an object, but is now an array.
+        const { inlineSize: width, blockSize: height } = Array.isArray(contentBoxSize) ? contentBoxSize[0] : contentBoxSize;
         update({ width, height });
       })).observe(previewOutput);
 
