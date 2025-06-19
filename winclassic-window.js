@@ -54,6 +54,11 @@ function createWindowSVG({
     GradientInactiveTitle = DEFAULT_COLORS.GradientInactiveTitle,
     Window = DEFAULT_COLORS.Window,
   } = {},
+  controlBox: {
+    minimize: showMinimizeButton = true,
+    maximize: showMaximizeButton = true,
+    close: showCloseButton = true,
+  } = {},
 }) {
   const padding = 2;
   const frameSize = 2;
@@ -71,6 +76,7 @@ function createWindowSVG({
     x: maximized ? 0 : frameSize + padding,
     y: maximized ? 0 : frameSize + padding,
   };
+
   const titlebar = {
     width: windowContents.width,
     height: 18,
@@ -79,18 +85,47 @@ function createWindowSVG({
       height: 14,
     },
   };
-  titlebar.gradient = {
-    width: titlebar.width - (titlebar.button.width * 3 + padding * 3),
+  const titlebarButtonCount = Boolean(showMinimizeButton) + Boolean(showMaximizeButton) + Boolean(showCloseButton);
+  const paddingCount = titlebarButtonCount === 0 ? 0
+    : titlebarButtonCount === 1 ? 2
+    : 2 + Boolean(showCloseButton); // the close button has extra padding to its left
+
+  titlebar.controlBox = {
+    width: titlebar.button.width * titlebarButtonCount + padding * paddingCount,
     height: titlebar.height,
   };
+  titlebar.controlBox.buttons = [
+    showMinimizeButton && { type: 'minimize-button' },
+    showMaximizeButton && { type: maximized ? 'restore-button' : 'maximize-button' },
+    showCloseButton    && { type: 'close-button' },
+  ].filter((c) => c)
+  .map((control, i, controls) => {
+    const lastX = (controls[i - 1] ?? { x: padding - titlebar.button.width }).x;
+    // Yes, this mutates the item. It's fine.
+    control.x = lastX + titlebar.button.width;
+    if (control.type === 'close-button' && controls.length > 1) {
+      // the close button has extra padding to its left if there are other buttons
+      control.x += padding;
+    }
+    control.y = 2;
+    return control;
+  });
+
+  titlebar.gradient = {
+    width: titlebar.width - titlebar.controlBox.width,
+    height: titlebar.height,
+  };
+
   const statusbar = {
     width: windowContents.width,
     height: 18,
   }
+
   const windowTextArea = {
     width: windowContents.width,
     height: windowContents.height - titlebar.height - padding - (statusbar.height + padding) * showStatus,
   };
+
   const scrollbar = {
     height: windowTextArea.height - frameSize * 2,
     button: {
@@ -101,6 +136,7 @@ function createWindowSVG({
   };
   scrollbar.width = scrollbar.button.width;
   scrollbar.x = windowTextArea.width - frameSize - scrollbar.width;
+
   const resizeGrip = {
     width: 13,
     height: 13,
@@ -204,12 +240,9 @@ function createWindowSVG({
        <use href="#scroll-down-symbol" xlink:href="#scroll-down-symbol" x="4" y="6"/>
      </g>
 
-     <g id="titlebar-buttons">
-       <rect class="${titleGradientColor}" width="54" height="18"/>
-       <use href="#minimize-button" xlink:href="#minimize-button" x="2" y="2"/>
-${maximized ? '       <use href="#restore-button" xlink:href="#restore-button" x="18" y="2"/>\n'
-            : '       <use href="#maximize-button" xlink:href="#maximize-button" x="18" y="2"/>\n'
-}       <use href="#close-button" xlink:href="#close-button" x="36" y="2"/>
+     <g id="titlebar-control-box">
+       <rect class="${titleGradientColor}" width="${titlebar.controlBox.width}" height="${titlebar.controlBox.height}"/>
+${titlebar.controlBox.buttons.map((c) => `       <use href="#${c.type}" xlink:href="#${c.type}" x="${c.x}" y="${c.y}"/>\n`).join('')}
      </g>
 
      <g id="window-frame">
@@ -239,7 +272,7 @@ ${maximized ? '       <use href="#restore-button" xlink:href="#restore-button" x
 
      <g id="titlebar">
        <rect fill="url(#titlebar-gradient)" width="${titlebar.gradient.width}" height="18"/>
-       <use href="#titlebar-buttons" xlink:href="#titlebar-buttons" x="${titlebar.gradient.width}"/>
+       <use href="#titlebar-control-box" xlink:href="#titlebar-control-box" x="${titlebar.gradient.width}"/>
      </g>
 
      <g id="window-main">

@@ -68,6 +68,9 @@
           <label><input id="show-scrollbar" type="checkbox" checked="checked" /> Scrollbar</label>
           <label><input id="show-status" type="checkbox" checked="checked" /> Status bar</label>
           <label><input id="show-resize" type="checkbox" checked="checked" /> Resize grip</label>
+          <label><input id="show-minimize" type="checkbox" checked="checked" /> Minimize button</label>
+          <label><input id="show-maximize" type="checkbox" checked="checked" /> Maximize button</label>
+          <label><input id="show-close" type="checkbox" checked="checked" /> Close button</label>
         </details>
 
         <details class="input-group">
@@ -121,6 +124,9 @@
       const scrollbarInput = document.getElementById("show-scrollbar");
       const resizeInput = document.getElementById("show-resize");
       const statusInput = document.getElementById("show-status");
+      const showMinimizeInput = document.getElementById("show-minimize");
+      const showMaximizeInput = document.getElementById("show-maximize");
+      const showCloseInput = document.getElementById("show-close");
       const maximizedInput = document.getElementById("maximized");
       const paletteInputGroup = document.forms.inputs.elements.palette;
       const previewOutput = document.getElementById("preview");
@@ -154,6 +160,11 @@
         maximized = maximizedInput.checked,
         palette = paletteInputGroup.value,
         colors = createColorsObject(colorPickers),
+        controlBox = {
+          minimize: showMinimizeInput.checked,
+          maximize: showMaximizeInput.checked,
+          close: showCloseInput.checked,
+        },
       } = {}) {
         ({
           svg,
@@ -168,6 +179,7 @@
           maximized,
           palette,
           colors,
+          controlBox,
         }));
 
         widthInput.value = width;
