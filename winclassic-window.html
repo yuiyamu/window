@@ -20,7 +20,8 @@
         flex-wrap: wrap;
       }
 
-      .colors label {
+      .colors label,
+      .controls label {
         display: block;
       }
 
@@ -31,6 +32,20 @@
       label {
         white-space: nowrap;
       }
+
+      .input-group {
+        border-style: solid;
+        border-width: 1px;
+        padding: 0.5ex 1ex;
+      }
+
+      .input-group + .input-group {
+        margin-top: 1ex;
+      }
+
+      summary {
+        font-weight: bold;
+      }
     </style>
   </head>
   <body>
@@ -39,15 +54,22 @@
       <fieldset>
         <input id="reset" type="reset" class="reset-button" />
 
-        <label>Width <input id="width" type="number" value="532" min="0" /></label>
-        <label>Height <input id="height" type="number" value="972" min="0" /></label>
-        <label>Scale <input id="scale" type="number" value="2" min="0" step="any" /></label>
-        <label><input id="show-scrollbar" type="checkbox" checked="checked" /> Scrollbar</label>
-        <label><input id="show-status" type="checkbox" checked="checked" /> Status bar</label>
-        <label><input id="show-resize" type="checkbox" checked="checked" /> Resize grip</label>
-        <label><input id="maximized" type="checkbox" /> Maximized</label>
+        <details open="open" class="input-group">
+          <summary>Dimensions</summary>
+          <label>Width <input id="width" type="number" value="532" min="0" /></label>
+          <label>Height <input id="height" type="number" value="972" min="0" /></label>
+          <label>Scale <input id="scale" type="number" value="2" min="0" step="any" /></label>
+          <label><input id="maximized" type="checkbox" /> Maximized</label>
+        </details>
 
-        <details>
+        <details class="controls input-group">
+          <summary>Controls</summary>
+          <label><input id="show-scrollbar" type="checkbox" checked="checked" /> Scrollbar</label>
+          <label><input id="show-status" type="checkbox" checked="checked" /> Status bar</label>
+          <label><input id="show-resize" type="checkbox" checked="checked" /> Resize grip</label>
+        </details>
+
+        <details class="input-group">
           <summary>Colors</summary>
           <div class="palette">
             Palette:
