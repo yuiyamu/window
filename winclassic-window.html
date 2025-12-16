@@ -96,8 +96,8 @@
 
         <details open="open" class="input-group">
           <summary>Dimensions</summary>
-          <label>Width <input id="width" type="number" value="532" min="0" /></label>
-          <label>Height <input id="height" type="number" value="972" min="0" /></label>
+          <label>Width <input id="width" type="number" value="800" min="0" /></label>
+          <label>Height <input id="height" type="number" value="400" min="0" /></label>
           <label>Scale <input id="scale" type="number" value="2" min="0" step="any" /></label>
           <label><input id="maximized" type="checkbox" /> Maximized</label>
         </details>
@@ -186,13 +186,6 @@
 
       function createColorsObject(colorPickers) {
         return colorPickers.reduce((pickers, picker) => Object.assign(pickers, { [picker.dataset.item]: picker.value }), {});
-      }
-
-      function rgbToHex(r, g, b) {
-        return "#"
-          + parseInt(r, 10).toString(16).padStart(2, "0")
-          + parseInt(g, 10).toString(16).padStart(2, "0")
-          + parseInt(b, 10).toString(16).padStart(2, "0");
       }
 
       function parseIniContent(content) {
