@@ -199,15 +199,17 @@
       }
 
       function setColors(colors) {
+        colorPickers.forEach((picker) => picker.value = colors[picker.dataset.item]);
+      }
+
+      function setDefaultColors(colors) {
         colorPickers.forEach((picker) => picker.defaultValue = colors[picker.dataset.item]);
       }
 
-      function setDefaultColors() {
-        setColors(DEFAULT_COLORS);
-      }
-
       function importColors(iniContent) {
-        setColors(parseIniContent(iniContent));
+        const colors = parseIniContent(iniContent);
+        setDefaultColors(colors);
+        setColors(colors);
       }
 
       function update({
@@ -274,7 +276,7 @@
         importColorsDialog.close();
       });
 
-      setDefaultColors();
+      setDefaultColors(DEFAULT_COLORS);
       update();
     </script>
   </body>
