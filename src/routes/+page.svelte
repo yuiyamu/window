@@ -22,6 +22,9 @@
   //will determine this later with the image you drag in :p
   let bgFilename = $state("");
 
+  let windowTitle = $state("");
+  let windowIcon = $state("/icons/w2k_audio_cd.ico");
+
   let targetWidth = $state(800);
   let targetHeight = $state(400);
   let isActive = $state(true); //should be able to change this via web tick tick
@@ -137,6 +140,8 @@
 
       const context = canvas.getContext("2d");
       if (!context) return; 
+
+      context.imageSmoothingEnabled = false; //KILL antialiasing
       context.drawImage(image, 0, 0, width, height);
 
       //then, force download >.<
@@ -160,14 +165,21 @@
     
 <div>
     <input type="file" accept="image/*" bind:files={inputFiles} onchange={() => uploadFile()} />
-    <label>scale</label>
-    <input type="range" min="1" max="10" bind:value={scale}/>
-    <button id="download-png" onclick={() => exportPNG()}>download (~˶˃ ᵕ ˂˶)~</button>
+    <label for="scale">scale</label>
+    <input id="scale" type="range" min="1" max="15" bind:value={scale}/>
+    <label for="title-bar">window title</label>
+    <input id="title-bar" type="text" bind:value={windowTitle}/>
+    <button onclick={() => exportPNG()}>download (~˶˃ ᵕ ˂˶)~</button>
 </div>
 
 <div id="preview">
 <svg width="{targetWidth}" height="{targetHeight}" viewBox="0 0 {targetWidth} {targetHeight}" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+   <!-- fuckass shit below is trying its best to kill antialiasing >.< -->
    <style><![CDATA[
+     @font-face{ font-family: 'Tahoma'; src: url('/ms_sans_serif_bold.woff2') }
+     svg { shape-rendering: crispEdges; }
+     text { text-rendering: optimizeSpeed; }
+
      .ButtonDkShadow { fill: #000000; }
      .ButtonShadow   { fill: #5A4EB1; }
      .ButtonFace     { fill: #AEA8D9; }
@@ -281,6 +293,8 @@
 
      <g id="titlebar">
        <rect fill="url(#titlebar-gradient)" width="{titlebar.gradient.width}" height="18"/>
+       <image href="{windowIcon}" x="3" y="{(titlebarHeight - 14) / 2}" width="14" height="14" style="image-rendering: pixelated;"/>
+       <text x="{3 + 14 + 3}" y="{titlebarHeight / 2}" dominant-baseline="central" class="ButtonHilight" style="font-family: 'Tahoma', serif; font-size: 11px; font-weight: bold;">{windowTitle}</text>
        <use href="#titlebar-control-box" xlink:href="#titlebar-control-box" x="{titlebar.gradient.width}"/>
      </g>
 
@@ -316,6 +330,11 @@
 </footer>
 
 <style>
+  :global(body) {
+    background-image: url("/background.jpg");
+    color:rgb(80, 49, 49)
+  }
+
   #preview {
     display: inline-block;
     overflow: hidden;
